@@ -1,0 +1,40 @@
+---
+- name: configfiles
+  block:
+    - name: create configfiles
+      block:
+        - name: create config dir
+          file:
+            path: /tmp/apigee
+            state: directory
+
+        - name: create global config
+          template:
+            src: config.conf.j2
+            dest: /tmp/apigee/config.conf
+
+        - name: copy license file
+          copy:
+            src: files/license.txt
+            dest: /tmp/apigee/license.txt
+
+        - name: create new ui config
+          template:
+            src: newui.conf.j2
+            dest: /tmp/apigee/newui.conf
+
+        - name: create sso config
+          template:
+            src: sso.conf.j2
+            dest: /tmp/apigee/sso.conf
+
+        - name: create sso config
+          template:
+            src: sso.conf.j2
+            dest: /tmp/apigee/sso.conf
+
+  when:
+    -  inventory_hostname in groups.apigee
+  tags:
+    - install_all
+    - configfiles

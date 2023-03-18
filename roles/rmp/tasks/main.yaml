@@ -1,0 +1,11 @@
+- name: install rmp
+  block:
+
+    - name: install rmp
+      shell:
+        cmd: /opt/apigee/apigee-setup/bin/setup.sh -p rmp -f /tmp/apigee/config.conf
+  when: 
+    - inventory_hostname in groups.rmp
+  tags:
+    - install_all
+    - rmp

@@ -1,0 +1,12 @@
+- name: postinstall 
+  block:
+
+    - name: restart ui
+      shell:
+        cmd: /opt/apigee/apigee-service/bin/apigee-service edge-ui restart
+
+  when: 
+    - inventory_hostname in groups.mgmt
+  tags:
+    - install_all
+    - postinstall
