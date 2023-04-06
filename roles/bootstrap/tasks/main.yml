@@ -16,4 +16,21 @@
 
     - name: install setup util
       shell:
-        cmd: /opt/apigee/apigee-service/bin/apigee
+        cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
+
+    - name: add missing option to apigee repo
+      community.general.ini_file:
+        path: /etc/yum.repos.d/apigee.repo
+        section: "{{ item }}"
+        option: module_hotfixes
+        value: 1
+      with_items:
+        - "apigee-$apigeestage"
+        - "apigee-thirdparty"
+  
+  when:
+    -  inventory_hostname in groups.apigee
+
+  tags:
+    - install_all
+    - bootstrap
