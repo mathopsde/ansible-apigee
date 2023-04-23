@@ -1,0 +1,12 @@
+- name: install analytics
+  block:
+
+    - name: install analytics
+      throttle: 1
+      shell:
+        cmd: /opt/apigee/apigee-setup/bin/setup.sh -p qs -f /tmp/apigee/config.conf
+  when: 
+    - inventory_hostname in groups.qpid
+  tags:
+    - install_all
+    - qpid

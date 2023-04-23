@@ -1,0 +1,143 @@
+---
+- name: prepare
+  block:
+
+    - name: update os
+      yum:
+        name: "*"
+        exclude:
+          - python36
+        state: latest
+        update_only: yes
+        use_backend: dnf
+
+    - name: install python
+      dnf:
+        name:
+          - python39
+          - python39-pip
+          - python39-setuptools
+          - python2
+          - python2-pip
+        state: present
+
+    # - name: remove old links
+    #   file:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   with_items:
+    #     - /usr/bin/python3
+    #     - /usr/bin/python
+
+    - name: create new links
+      file:
+        dest: "{{ item.dest }}"
+        src: "{{ item.src }}"
+        state: link
+        force: true
+      loop:
+        - { src: /usr/bin/python3.9, dest: /usr/bin/python3 }
+        - { src: /usr/bin/python2.7, dest: /usr/bin/python }
+
+    - name: disable firewall
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: false
+
+    - name: set hostname
+      hostname:
+        name: "{{ hostname }}"
+
+    - name: disable ipv6
+      sysctl:
+        name: net.ipv6.conf.all.disable_ipv6
+        value: 1
+        state: present
+
+    - name: disable selinux
+      lineinfile:
+        regexp: "^SELINUX=.*"
+        line: "SELINUX=disabled"
+        path: /etc/selinux/config
+      register: selinux_state
+
+    - name: install epel repo
+      yum:
+        name: oracle-epel-release-el8
+        state: present
+
+    - name: install packages
+      yum:
+        name: 
+          - bind-utils
+          - lsof
+          - tcpdump
+        state: present
+
+    - name: update oip and setuptools
+      pip:
+        executable: /usr/bin/pip3
+        name:
+          - pip
+          - setuptools
+        state: latest
+
+    - name: install python modules
+      pip:
+        executable: /usr/bin/pip3
+        name:
+          - cryptography
+        state: latest
+
+    - name: reboot to shutdown selinux
+      reboot:
+      # var: selinux_state  debug:
+      
+
+    - name: create group apigee
+      group:
+        name: apigee
+        gid: 200
+
+    - name: create user apigee
+      user:
+        name: apigee
+        uid: 500
+        group: apigee
+
+    # - name: install java
+    #   yum:
+    #     name: java-1.8.0-openjdk
+    #     state: present
+
+    # - name: get bootstrap file
+    #   get_url:
+    #     url: "https://software.apigee.com/bootstrap_{{ apigee_version }}.sh"
+    #     dest: /tmp
+
+    # - name: initial install
+    #   shell:
+    #     cmd: bash /tmp/bootstrap_{{ apigee_version }}.sh apigeeuser=bundesk apigeepassword=oQfPmaY1F0RZ4fsi
+
+    # - name: install setup util
+    #   shell:
+    #     cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
+
+    # - name: add missing option to apigee repo
+    #   ini_file:
+    #     path: /etc/yum.repos.d/apigee.repo
+    #     section: "{{ item }}"
+    #     option: module_hotfixes
+    #     value: 1
+    #   with_items:
+    #     - "apigee-$apigeestage"
+    #     - "apigee-thirdparty"
+
+
+  when:
+    -  inventory_hostname in groups.apigee
+
+  tags:
+    - install_all
+    - prepare

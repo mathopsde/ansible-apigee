@@ -1,0 +1,12 @@
+- name: install postgresql
+  block:
+
+    - name: install postgresql
+      throttle: 1
+      shell:
+        cmd: /opt/apigee/apigee-setup/bin/setup.sh -p ps -f /tmp/apigee/config.conf
+  when: 
+    - inventory_hostname in groups.postgres
+  tags:
+    - install_all
+    - postgres
