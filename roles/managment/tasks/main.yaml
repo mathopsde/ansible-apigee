@@ -1,10 +1,11 @@
+---
 - name: install managment server
   block:
-
     - name: install managment server
       shell:
-        cmd: /opt/apigee/apigee-setup/bin/setup.sh -p ms -f /tmp/apigee/config.conf
-  when: 
+        cmd: /opt/apigee/apigee-setup/bin/setup.sh -p ms -f \
+              /tmp/apigee/config.conf
+  when:
     - inventory_hostname in groups.mgmt
   tags:
     - install_all

@@ -34,7 +34,7 @@
             dest: /tmp/apigee/sso.conf
 
   when:
-    -  inventory_hostname in groups.apigee
+    - inventory_hostname in groups.apigee
   tags:
     - install_all
     - configfiles
