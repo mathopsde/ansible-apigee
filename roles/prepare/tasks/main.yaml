@@ -1,35 +1,34 @@
 ---
 - name: prepare
   block:
+    - debug: msg='version 1.2.4'
 
     - name: update os
-      yum:
+      dnf:
         name: "*"
-        exclude:
-          - python36
         state: latest
         update_only: yes
         use_backend: dnf
 
-    - name: install python
-      dnf:
-        name:
-          - python39
-          - python39-pip
-          - python39-setuptools
-          - python2
-          - python2-pip
-        state: present
+    # - name: install python
+    #   dnf:
+    #     name:
+    #       - python39
+    #       - python39-pip
+    #       - python39-setuptools
+    #       - python2
+    #       - python2-pip
+    #     state: present
 
-    - name: create new links
-      file:
-        dest: "{{ item.dest }}"
-        src: "{{ item.src }}"
-        state: link
-        force: true
-      loop:
-        - {src: /usr/bin/python3.9, dest: /usr/bin/python3}
-        - {src: /usr/bin/python2.7, dest: /usr/bin/python}
+    # - name: create new links
+    #   file:
+    #     dest: "{{ item.dest }}"
+    #     src: "{{ item.src }}"
+    #     state: link
+    #     force: true
+    #   loop:
+    #     - {src: /usr/bin/python3.9, dest: /usr/bin/python3}
+    #     - {src: /usr/bin/python2.7, dest: /usr/bin/python}
 
     - name: disable firewall
       systemd:
