@@ -1,11 +1,12 @@
+---
 - name: install zookeeper and cassandra
   block:
 
     - name: install zookeeper and cassandra
       shell:
         cmd: /opt/apigee/apigee-setup/bin/setup.sh -p ds -f /tmp/apigee/config.conf
-        
-  when: 
+
+  when:
     - inventory_hostname in groups.cassandra
   tags:
     - install_all

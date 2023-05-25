@@ -1,19 +1,21 @@
+---
 - name: organizations
   block:
-
     - name: install provisioning
       shell:
-        cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
+        cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-provision \
+              install
 
     - name: create config files
       template:
         src: org.conf.j2
         dest: "/tmp/apigee/{{ item.value.name }}.conf"
       loop: "{{organizations|dict2items}}"
-    
+
     - name: install orgs
       shell:
-        cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f "/tmp/apigee/{{ item.value.name }}.conf"
+        cmd: /opt/apigee/apigee-service/bin/apigee-service apigee-provision \
+              setup-org -f "/tmp/apigee/{{ item.value.name }}.conf"
       loop: "{{organizations|dict2items}}"
 
   when:
